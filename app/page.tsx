@@ -37,7 +37,7 @@ export default function Home() {
 			<motion.p ref={el => elementRefs.current.set('input-output-hidden', el!)} className="subtitle col-start-9 col-span-2" style={{ x: "0%" }}>0 -&gt; 1</motion.p>
 		</div>
 		<div className="col-span-12 grid grid-cols-12">
-			<motion.h1 ref={el => elementRefs.current.set('limits', el!)} className="title col-start-3 col-span-4">Limits</motion.h1>
+			<motion.h1 ref={el => elementRefs.current.set('limits', el!)} className="title col-start-3 col-span-4">Limits</motion.h1> {/*  */}
 			<motion.h1 ref={el => elementRefs.current.set('limits-hidden', el!)} style={{ x: "100%" }} className="title col-start-9 col-span-4">Limits</motion.h1>
 		</div>
 
