@@ -31,6 +31,7 @@ body {
 	font-weight: 100;
 	font-style: italic;
 	font-size:116px;
+  white-space: nowrap;
 }
 
 .subtitle {
@@ -38,4 +39,13 @@ font-family: "helvetica-neue-lt-pro", sans-serif;
 font-weight: 400;
 font-style: normal;
 font-size:14px;
+}
+
+
+.video {
+    position: absolute;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
