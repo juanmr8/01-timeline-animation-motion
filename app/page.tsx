@@ -47,13 +47,13 @@ export default function Home() {
 
   return (
     <div ref={scope}>
-      <div className='relative h-screen overflow-hidden text-[#252525]'>
+      <div className='relative h-screen overflow-hidden text-[#252525] pointer-events-none'>
         <video
           src='/output.mp4'
           autoPlay
           muted
           loop
-          className="video"
+          className="video pointer-events-none"
         />
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/80 via-black/60 to-black/80 pointer-events-none" />
         <div className='wall-container relative h-full w-full'>
