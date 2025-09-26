@@ -1,7 +1,7 @@
 import { ElementOrSelector, useAnimate } from 'framer-motion';
 import { DOMKeyframesDefinition } from 'motion/react';
 import { AnimationOptions } from 'motion/react';
-import { useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useEffect } from 'react';
 
 type AnimateParams = [
@@ -13,45 +13,74 @@ type AnimateParams = [
 type Animation = AnimateParams | Animation[];
 
 export const useMotionTimeline = (
-  keyframes: Animation[],
-  count: number = 1
-) => {
-  const mounted = useRef(true);
+	keyframes: (measurements: Map<string, DOMRect>) => Animation[],
+	count: number = 1,
+	measurementSelectors: string[] = []
+  ) => {
+	const mounted = useRef(true);
+	const measurements = useRef<Map<string, DOMRect>>(new Map());
+	const [scope, animate] = useAnimate();
 
-  const [scope, animate] = useAnimate();
+	const takeMeasurements = () => {
+	  const viewport = {
+		width: window.innerWidth,
+		height: window.innerHeight
+	  };
 
-  useEffect(() => {
-    mounted.current = true;
+	  // Always include viewport measurements
+	  measurements.current.set('viewport', {
+		top: 0,
+		left: 0,
+		right: viewport.width,
+		bottom: viewport.height,
+		width: viewport.width,
+		height: viewport.height,
+		x: 0,
+		y: 0,
+		toJSON: () => ({})
+	  } as DOMRect);
 
-    handleAnimate();
+	  measurementSelectors.forEach(selector => {
+		const element = scope.current?.querySelector(selector);
+		if (element) {
+		  measurements.current.set(selector, element.getBoundingClientRect());
+		}
+	  });
+	};
 
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
+	useEffect(() => {
+	  mounted.current = true;
+	  takeMeasurements();
+	  const animationKeyframes = keyframes(measurements.current);
+	  handleAnimate(animationKeyframes);
 
-  const processAnimation = async (animation: Animation) => {
-    // If list of animations, run all concurrently
-    if (Array.isArray(animation[0])) {
-      await Promise.all(
-        animation.map(async a => {
-          await processAnimation(a as Animation);
-        })
-      );
-    } else {
-      // Else run the single animation
-      await animate(...(animation as AnimateParams));
-    }
+
+	  return () => {
+		mounted.current = false;
+	  };
+	}, []);
+
+	// Rest of your animation logic...
+	const processAnimation = async (animation: Animation) => {
+	  if (Array.isArray(animation[0])) {
+		await Promise.all(
+		  animation.map(async a => {
+			await processAnimation(a as Animation);
+		  })
+		);
+	  } else {
+		await animate(...(animation as AnimateParams));
+	  }
+	};
+
+	const handleAnimate = async (animationKeyframes: Animation[]) => {
+	  for (let i = 0; i < count; i++) {
+		for (const animation of animationKeyframes) {
+		  if (!mounted.current) return;
+		  await processAnimation(animation);
+		}
+	  }
+	};
+
+	return scope;
   };
-
-  const handleAnimate = async () => {
-    for (let i = 0; i < count; i++) {
-      for (const animation of keyframes) {
-        if (!mounted.current) return;
-        await processAnimation(animation);
-      }
-    }
-  };
-
-  return scope;
-};

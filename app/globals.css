@@ -30,8 +30,9 @@ body {
 	font-family: warbler-display, sans-serif;
 	font-weight: 100;
 	font-style: italic;
-	font-size:116px;
-  white-space: nowrap;
+	font-size: 116px;
+	display: inline-block; /* Add this line */
+
 }
 
 .subtitle {
