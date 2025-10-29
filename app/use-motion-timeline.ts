@@ -54,13 +54,11 @@ export const useMotionTimeline = (
 	  const animationKeyframes = keyframes(measurements.current);
 	  handleAnimate(animationKeyframes);
 
-
 	  return () => {
 		mounted.current = false;
 	  };
 	}, []);
 
-	// Rest of your animation logic...
 	const processAnimation = async (animation: Animation) => {
 	  if (Array.isArray(animation[0])) {
 		await Promise.all(
